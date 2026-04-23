@@ -13,6 +13,14 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // cPanel/Apache blocks DELETE and PUT at the server level.
+  // Laravel supports method spoofing: send POST with _method in the body.
+  if (config.method && ["delete", "put", "patch"].includes(config.method.toLowerCase())) {
+    config.data = { ...(typeof config.data === "object" && config.data !== null ? config.data : {}), _method: config.method.toUpperCase() };
+    config.method = "post";
+  }
+
   return config;
 });
 
