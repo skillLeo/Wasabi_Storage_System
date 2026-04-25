@@ -20,7 +20,7 @@ export default function Login() {
                 <div className="absolute -bottom-40 -right-24 w-[480px] h-[480px] rounded-full bg-white/5" />
                 <div className="relative flex flex-col justify-center h-full px-12 xl:px-16">
                     <div className="mb-10 inline-block bg-white rounded-2xl px-6 py-4 shadow-lg">
-                        <img src="/logo.png" alt="No One Left Behind" width={200} height={80} className="object-contain block" />
+                        <img src="/logo.png" alt="No One Left Behind" width={240} height={96} className="object-contain block" />
                     </div>
                     <h1 className="text-3xl xl:text-4xl font-bold text-white leading-snug mb-4">
                         Employee Document<br />Portal
@@ -46,7 +46,7 @@ export default function Login() {
             {/* Right form panel */}
             <div className="flex-1 flex flex-col items-center justify-center bg-white px-6 sm:px-10 py-12">
                 <div className="lg:hidden mb-10 flex justify-center">
-                    <img src="/logo.png" alt="No One Left Behind" style={{ width: 190, height: 'auto' }} className="object-contain block" />
+                    <img src="/logo.png" alt="No One Left Behind" style={{ width: 230, height: 'auto' }} className="object-contain block" />
                 </div>
 
                 <div className="w-full max-w-sm">

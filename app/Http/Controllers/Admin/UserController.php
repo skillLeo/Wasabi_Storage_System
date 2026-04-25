@@ -28,6 +28,7 @@ class UserController extends Controller
             'id'                    => $user->id,
             'name'                  => $user->name,
             'email'                 => $user->email,
+            'role'                  => $user->role,
             'is_active'             => $user->is_active,
             'completion_percentage' => $total > 0 ? round(($uploaded / $total) * 100, 1) : 0,
             'total_slots'           => $total,
@@ -49,7 +50,8 @@ class UserController extends Controller
 
     public function index()
     {
-        $employees = User::where('role', 'employee')
+        $currentId = auth()->id();
+        $employees = User::where('id', '!=', $currentId)
             ->with('userSlots.slot')
             ->get()
             ->map(fn($u) => $this->employeeData($u));
@@ -63,21 +65,27 @@ class UserController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
+            'role'     => 'sometimes|in:employee,admin',
         ]);
+
+        $role = $request->input('role', 'employee');
 
         $user = User::create([
             'name'      => $request->name,
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
-            'role'      => 'employee',
+            'role'      => $role,
             'is_active' => true,
         ]);
 
-        foreach (Slot::all() as $slot) {
-            UserSlot::create(['user_id' => $user->id, 'slot_id' => $slot->id]);
+        if ($role === 'employee') {
+            foreach (Slot::all() as $slot) {
+                UserSlot::create(['user_id' => $user->id, 'slot_id' => $slot->id]);
+            }
         }
 
-        return redirect()->route('admin.users')->with('success', 'Employee account created.');
+        $label = $role === 'admin' ? 'Admin account' : 'Employee account';
+        return redirect()->route('admin.users')->with('success', "{$label} created.");
     }
 
     public function update(Request $request, User $user)

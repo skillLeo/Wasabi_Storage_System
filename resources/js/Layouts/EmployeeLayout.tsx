@@ -1,9 +1,11 @@
 import { ReactNode, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import { useLogo } from '@/hooks/useLogo';
 
 export default function EmployeeLayout({ children }: { children: ReactNode }) {
     const { auth, flash } = usePage().props as any;
+    const logoSrc = useLogo();
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -14,7 +16,7 @@ export default function EmployeeLayout({ children }: { children: ReactNode }) {
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <nav className="bg-white border-b border-gray-100 shadow-sm">
                 <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <img src="/logo.png" alt="No One Left Behind" style={{ width: 130, height: 'auto' }} className="object-contain block" />
+                    <img src={logoSrc} alt="No One Left Behind" style={{ width: 165, height: 'auto' }} className="object-contain block" />
                     <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-600 hidden sm:block">{auth.user?.name}</span>
                         <button onClick={() => router.post('/logout')}

@@ -58,7 +58,7 @@ export default function UserDetail({ employee, slots }: { employee: EmployeeDeta
             </div>
 
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-700">Document Slots</h2>
+                <h2 className="text-sm font-semibold text-gray-700">Documents</h2>
                 <span className="text-xs text-gray-400">{slots.length} total</span>
             </div>
 

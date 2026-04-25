@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\SlotController as AdminSlotController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Employee\SlotController as EmployeeSlotController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,11 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
         Route::post('users/{user}/update', [AdminUserController::class, 'update'])->name('admin.users.update');
         Route::post('users/{user}/delete', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
         Route::get('users/{user}', [AdminUserController::class, 'show'])->name('admin.users.show');
+
+        Route::get('settings', [AdminSettingsController::class, 'index'])->name('admin.settings');
+        Route::post('settings/profile', [AdminSettingsController::class, 'updateProfile'])->name('admin.settings.profile');
+        Route::post('settings/password', [AdminSettingsController::class, 'updatePassword'])->name('admin.settings.password');
+        Route::post('settings/logo', [AdminSettingsController::class, 'updateLogo'])->name('admin.settings.logo');
     });
 
 // Employee routes

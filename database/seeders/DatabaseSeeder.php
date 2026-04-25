@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
         // Create admin
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@no1leftbehind.com',
-            'password' => Hash::make('Admin1234'),
+            'email' => 'admin@no1leftbehind.us',
+            'password' => Hash::make('Admin@1234'),
             'role' => 'admin',
             'is_active' => true,
         ]);
@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
 
         // Create employee accounts
         $employees = [
-            ['name' => 'John Smith', 'email' => 'john@no1leftbehind.com', 'password' => 'Employee1234'],
-            ['name' => 'Sara Johnson', 'email' => 'sara@no1leftbehind.com', 'password' => 'Employee1234'],
+            ['name' => 'John Smith', 'email' => 'john@no1leftbehind.us', 'password' => 'Employee1234'],
+            ['name' => 'Sara Johnson', 'email' => 'sara@no1leftbehind.us', 'password' => 'Employee1234'],
         ];
 
         foreach ($employees as $employeeData) {

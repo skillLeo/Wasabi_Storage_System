@@ -5,7 +5,7 @@ import Modal from '@/Components/Modal';
 import ConfirmModal from '@/Components/ConfirmModal';
 import Spinner from '@/Components/Spinner';
 
-interface Employee { id: number; name: string; email: string; is_active: boolean; }
+interface Employee { id: number; name: string; email: string; is_active: boolean; role: string; }
 
 function Avatar({ name }: { name: string }) {
     const initials = name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
@@ -20,7 +20,7 @@ export default function Users({ employees }: { employees: Employee[] }) {
     const [deleting, setDeleting] = useState(false);
     const [togglingId, setTogglingId] = useState<number | null>(null);
 
-    const form = useForm({ name: '', email: '', password: '' });
+    const form = useForm({ name: '', email: '', password: '', role: 'employee' });
 
     function handleCreate(e: React.FormEvent) {
         e.preventDefault();
@@ -72,7 +72,10 @@ export default function Users({ employees }: { employees: Employee[] }) {
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <Avatar name={emp.name} />
                                             <div className="min-w-0">
-                                                <Link href={`/admin/users/${emp.id}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 truncate block">{emp.name}</Link>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <Link href={`/admin/users/${emp.id}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 truncate">{emp.name}</Link>
+                                                    {emp.role === 'admin' && <span className="px-1.5 py-0.5 text-xs rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-100">Admin</span>}
+                                                </div>
                                                 <p className="text-xs text-gray-400 truncate">{emp.email}</p>
                                             </div>
                                         </div>
@@ -109,8 +112,11 @@ export default function Users({ employees }: { employees: Employee[] }) {
                                                 <div className="flex items-center gap-3">
                                                     <Avatar name={emp.name} />
                                                     <div>
+                                                        <div className="flex items-center gap-2 flex-wrap">
                                                         <Link href={`/admin/users/${emp.id}`} className="font-medium text-gray-900 hover:text-blue-600 transition-colors">{emp.name}</Link>
-                                                        <p className="text-xs text-gray-400 md:hidden">{emp.email}</p>
+                                                        {emp.role === 'admin' && <span className="px-1.5 py-0.5 text-xs rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-100">Admin</span>}
+                                                    </div>
+                                                    <p className="text-xs text-gray-400 md:hidden">{emp.email}</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -138,16 +144,26 @@ export default function Users({ employees }: { employees: Employee[] }) {
                 )}
             </div>
 
-            <Modal open={showModal} onClose={() => { setShowModal(false); form.reset(); }} title="Add New Employee">
+            <Modal open={showModal} onClose={() => { setShowModal(false); form.reset(); }} title="Add New User">
                 <form onSubmit={handleCreate} className="space-y-4">
-                    <p className="text-sm text-gray-500">The employee will be assigned all current document slots automatically.</p>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Role</label>
+                        <select value={form.data.role} onChange={(e) => form.setData('role', e.target.value)}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            <option value="employee">Employee — can upload their own documents</option>
+                            <option value="admin">Admin — full control, same as you</option>
+                        </select>
+                    </div>
+                    {form.data.role === 'employee' && (
+                        <p className="text-xs text-gray-400 -mt-2">Employee will be assigned all current documents automatically.</p>
+                    )}
                     {['name', 'email', 'password'].map((field) => (
                         <div key={field}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5 capitalize">{field === 'name' ? 'Full Name' : field === 'email' ? 'Email Address' : 'Temporary Password'}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">{field === 'name' ? 'Full Name' : field === 'email' ? 'Email Address' : 'Temporary Password'}</label>
                             <input type={field === 'password' ? 'password' : field === 'email' ? 'email' : 'text'} required
                                 minLength={field === 'password' ? 6 : undefined}
                                 value={(form.data as any)[field]} onChange={(e) => form.setData(field as any, e.target.value)}
-                                placeholder={field === 'name' ? 'John Smith' : field === 'email' ? 'john@company.com' : 'Min. 6 characters'}
+                                placeholder={field === 'name' ? 'John Smith' : field === 'email' ? 'john@company.us' : 'Min. 6 characters'}
                                 className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                             {(form.errors as any)[field] && <p className="text-xs text-red-600 mt-1">{(form.errors as any)[field]}</p>}
                         </div>
@@ -155,7 +171,7 @@ export default function Users({ employees }: { employees: Employee[] }) {
                     <div className="flex gap-3 justify-end pt-2">
                         <button type="button" onClick={() => { setShowModal(false); form.reset(); }} className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Cancel</button>
                         <button type="submit" disabled={form.processing} className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl transition-colors flex items-center gap-2 shadow-sm">
-                            {form.processing && <Spinner size="sm" />} Create Employee
+                            {form.processing && <Spinner size="sm" />} Create {form.data.role === 'admin' ? 'Admin' : 'Employee'}
                         </button>
                     </div>
                 </form>
