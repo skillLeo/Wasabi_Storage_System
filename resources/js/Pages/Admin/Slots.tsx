@@ -18,7 +18,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
 
     function handleAdd(e: React.FormEvent) {
         e.preventDefault();
-        addForm.post('/admin/slots', {
+        addForm.post('/admin/documents', {
             onSuccess: () => { addForm.reset(); setShowAddModal(false); },
         });
     }
@@ -29,7 +29,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
     }
 
     function handleSaveEdit(slot: Slot) {
-        editForm.post(`/admin/slots/${slot.id}/update`, {
+        editForm.post(`/admin/documents/${slot.id}/update`, {
             onSuccess: () => setEditingId(null),
         });
     }
@@ -37,7 +37,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
     function handleDelete() {
         if (!deleteTarget) return;
         setDeleting(true);
-        router.post(`/admin/slots/${deleteTarget.id}/delete`, {}, {
+        router.post(`/admin/documents/${deleteTarget.id}/delete`, {}, {
             onFinish: () => { setDeleting(false); setDeleteTarget(null); },
         });
     }

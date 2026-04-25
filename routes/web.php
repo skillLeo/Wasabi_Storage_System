@@ -18,10 +18,10 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
     ->group(function () {
         Route::get('dashboard', [AdminUserController::class, 'dashboard'])->name('admin.dashboard');
 
-        Route::get('slots', [AdminSlotController::class, 'index'])->name('admin.slots');
-        Route::post('slots', [AdminSlotController::class, 'store'])->name('admin.slots.store');
-        Route::post('slots/{slot}/update', [AdminSlotController::class, 'update'])->name('admin.slots.update');
-        Route::post('slots/{slot}/delete', [AdminSlotController::class, 'destroy'])->name('admin.slots.destroy');
+        Route::get('documents', [AdminSlotController::class, 'index'])->name('admin.slots');
+        Route::post('documents', [AdminSlotController::class, 'store'])->name('admin.slots.store');
+        Route::post('documents/{slot}/update', [AdminSlotController::class, 'update'])->name('admin.slots.update');
+        Route::post('documents/{slot}/delete', [AdminSlotController::class, 'destroy'])->name('admin.slots.destroy');
 
         Route::get('users', [AdminUserController::class, 'index'])->name('admin.users');
         Route::post('users', [AdminUserController::class, 'store'])->name('admin.users.store');
