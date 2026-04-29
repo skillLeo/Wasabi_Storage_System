@@ -3,7 +3,7 @@ export default function ProgressBar({ percentage }: { percentage: number }) {
     return (
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
             <div
-                className={`h-full rounded-full transition-all duration-500 ${pct === 100 ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                className={`h-full rounded-full transition-all duration-500 ${pct === 100 ? 'bg-emerald-500' : 'brand-bg'}`}
                 style={{ width: `${pct}%` }}
             />
         </div>

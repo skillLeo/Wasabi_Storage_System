@@ -45,7 +45,27 @@ class UserController extends Controller
             ->get()
             ->map(fn($u) => $this->employeeData($u));
 
-        return Inertia::render('Admin/Dashboard', ['employees' => $employees]);
+        $total = $employees->count();
+        $complete = $employees->where('completion_percentage', 100)->count();
+
+        return Inertia::render('Admin/Dashboard', [
+            'stats' => [
+                'total_employees' => $total,
+                'fully_complete' => $complete,
+                'incomplete' => $total - $complete,
+                'average_completion' => $total > 0 ? round($employees->avg('completion_percentage'), 1) : 0,
+            ],
+        ]);
+    }
+
+    public function progress()
+    {
+        $employees = User::where('role', 'employee')
+            ->with('userSlots.slot')
+            ->get()
+            ->map(fn($u) => $this->employeeData($u));
+
+        return Inertia::render('Admin/Progress', ['employees' => $employees]);
     }
 
     public function index()
@@ -93,7 +113,7 @@ class UserController extends Controller
         $request->validate([
             'name'      => 'sometimes|string|max:255',
             'email'     => 'sometimes|email|unique:users,email,' . $user->id,
-            'password'  => 'sometimes|string|min:6',
+            'password'  => 'sometimes|nullable|string|min:6',
             'is_active' => 'sometimes|boolean',
         ]);
 
@@ -104,7 +124,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('admin.users')->with('success', 'Employee updated.');
+        return redirect()->route('admin.users')->with('success', 'User updated.');
     }
 
     public function destroy(User $user)

@@ -1,10 +1,40 @@
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import Spinner from '@/Components/Spinner';
+import { useLogo } from '@/hooks/useLogo';
+import { useBrandTheme } from '@/hooks/useBrandTheme';
+
+interface Branding {
+    logo_width_desktop: number;
+    logo_width_mobile: number;
+    logo_alt_text: string;
+    login_headline: string;
+    login_subheading: string;
+    login_feature_one: string;
+    login_feature_two: string;
+    login_feature_three: string;
+    login_form_title: string;
+    login_form_subtitle: string;
+    login_email_label: string;
+    login_email_placeholder: string;
+    login_password_label: string;
+    login_password_placeholder: string;
+    login_submit_text: string;
+    login_submitting_text: string;
+    login_help_text: string;
+}
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors } = useForm({ email: '', password: '' });
+    const logoSrc = useLogo();
+    const { branding, flash } = usePage().props as { branding: Branding; flash?: { success?: string } };
+    useBrandTheme();
+    const features = [
+        branding.login_feature_one,
+        branding.login_feature_two,
+        branding.login_feature_three,
+    ].filter(Boolean);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -12,47 +42,52 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex">
-            {/* Left brand panel (desktop only) */}
-            <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col relative overflow-hidden"
-                style={{ background: 'linear-gradient(145deg, #2d6ea0 0%, #4a8ec4 50%, #6baed6 100%)' }}>
-                <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white/5" />
-                <div className="absolute -bottom-40 -right-24 w-[480px] h-[480px] rounded-full bg-white/5" />
+        <div className="min-h-screen flex bg-white">
+            <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col relative overflow-hidden brand-gradient">
                 <div className="relative flex flex-col justify-center h-full px-12 xl:px-16">
-                    <div className="mb-10 inline-block bg-white rounded-2xl px-6 py-4 shadow-lg">
-                        <img src="/logo.png" alt="No One Left Behind" width={240} height={96} className="object-contain block" />
+                    <div className="mb-10 inline-flex bg-white rounded-2xl px-6 py-4 shadow-xl shadow-black/10 max-w-md">
+                        <img
+                            src={logoSrc}
+                            alt={branding.logo_alt_text}
+                            style={{ width: branding.logo_width_desktop, maxWidth: '100%', height: 'auto' }}
+                            className="object-contain block"
+                        />
                     </div>
-                    <h1 className="text-3xl xl:text-4xl font-bold text-white leading-snug mb-4">
-                        Employee Document<br />Portal
+                    <h1 className="text-3xl xl:text-4xl font-bold text-white leading-tight mb-5 whitespace-pre-line max-w-md">
+                        {branding.login_headline}
                     </h1>
-                    <p className="text-blue-100 text-base leading-relaxed max-w-sm">
-                        Upload and manage your required company documents securely — all in one place.
+                    <p className="text-white/82 text-base leading-relaxed max-w-md">
+                        {branding.login_subheading}
                     </p>
-                    <div className="mt-10 space-y-3">
-                        {['Secure cloud storage', 'Upload in seconds', 'Track your progress'].map((f) => (
-                            <div key={f} className="flex items-center gap-3">
+                    <div className="mt-10 grid gap-3 max-w-md">
+                        {features.map((feature) => (
+                            <div key={feature} className="flex items-center gap-3 rounded-xl bg-white/10 px-3.5 py-3 ring-1 ring-white/15">
                                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <span className="text-blue-100 text-sm font-medium">{f}</span>
+                                <span className="text-white/88 text-sm font-medium">{feature}</span>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* Right form panel */}
             <div className="flex-1 flex flex-col items-center justify-center bg-white px-6 sm:px-10 py-12">
                 <div className="lg:hidden mb-10 flex justify-center">
-                    <img src="/logo.png" alt="No One Left Behind" style={{ width: 230, height: 'auto' }} className="object-contain block" />
+                    <img
+                        src={logoSrc}
+                        alt={branding.logo_alt_text}
+                        style={{ width: branding.logo_width_mobile, maxWidth: '100%', height: 'auto' }}
+                        className="object-contain block"
+                    />
                 </div>
 
                 <div className="w-full max-w-sm">
                     <div className="mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-                        <p className="text-sm text-gray-500 mt-1">Sign in to access your documents</p>
+                        <h2 className="text-2xl font-bold text-gray-950">{branding.login_form_title}</h2>
+                        <p className="text-sm text-gray-500 mt-1.5">{branding.login_form_subtitle}</p>
                     </div>
 
                     {errors.email && (
@@ -64,22 +99,43 @@ export default function Login() {
                         </div>
                     )}
 
+                    {flash?.success && (
+                        <div className="mb-5 px-4 py-3 rounded-xl brand-soft-bg brand-soft-border border">
+                            <p className="text-sm brand-text">{flash.success}</p>
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
-                            <input type="email" required autoComplete="email" value={data.email}
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">{branding.login_email_label}</label>
+                            <input
+                                type="email"
+                                required
+                                autoComplete="email"
+                                value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                placeholder="you@company.com" />
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all brand-field"
+                                placeholder={branding.login_email_placeholder}
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                            <div className="flex items-center justify-between gap-3 mb-1.5">
+                                <label className="block text-sm font-medium text-gray-700">{branding.login_password_label}</label>
+                                <Link href="/forgot-password" className="text-xs font-semibold brand-text">
+                                    Forgot password?
+                                </Link>
+                            </div>
                             <div className="relative">
-                                <input type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
-                                    value={data.password} onChange={(e) => setData('password', e.target.value)}
-                                    className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                    placeholder="••••••••" />
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    required
+                                    autoComplete="current-password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all brand-field"
+                                    placeholder={branding.login_password_placeholder}
+                                />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                                     {showPassword
@@ -91,12 +147,12 @@ export default function Login() {
                         </div>
 
                         <button type="submit" disabled={processing}
-                            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold text-sm rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 mt-2">
-                            {processing ? <><Spinner size="sm" /> Signing in…</> : 'Sign in'}
+                            className="w-full py-3 px-4 brand-primary disabled:opacity-60 text-white font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mt-2">
+                            {processing ? <><Spinner size="sm" /> {branding.login_submitting_text}</> : branding.login_submit_text}
                         </button>
                     </form>
 
-                    <p className="text-center text-xs text-gray-400 mt-8">Need access? Contact your administrator.</p>
+                    <p className="text-center text-xs text-gray-400 mt-8">{branding.login_help_text}</p>
                 </div>
             </div>
         </div>

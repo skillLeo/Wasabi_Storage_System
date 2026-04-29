@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\BrandingSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -24,6 +25,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error'   => $request->session()->get('error'),
             ],
+            'branding' => BrandingSetting::shared(),
         ]);
     }
 }

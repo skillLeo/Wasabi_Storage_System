@@ -60,12 +60,12 @@ function UploadCard({ slot }: { slot: SlotItem }) {
     }
 
     return (
-        <div className={`bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col transition-all hover:shadow-md ${slot.status === 'uploaded' ? 'border-gray-100' : 'border-dashed border-gray-200 hover:border-blue-300'}`}>
+        <div className={`bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col transition-all hover:shadow-md ${slot.status === 'uploaded' ? 'border-gray-100' : 'border-dashed border-gray-200 hover-brand-soft-border'}`}>
             <div className="p-5 flex-1 flex flex-col">
                 <div className="flex items-start justify-between gap-2 mb-4">
                     <div className="flex items-center gap-2.5 min-w-0">
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${slot.status === 'uploaded' ? 'bg-emerald-50' : 'bg-blue-50'}`}>
-                            <svg className={`w-5 h-5 ${slot.status === 'uploaded' ? 'text-emerald-500' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${slot.status === 'uploaded' ? 'bg-emerald-50' : 'brand-soft-bg'}`}>
+                            <svg className={`w-5 h-5 ${slot.status === 'uploaded' ? 'text-emerald-500' : 'brand-text'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
@@ -82,13 +82,13 @@ function UploadCard({ slot }: { slot: SlotItem }) {
                             </a>
                         ) : (
                             <a href={slot.presigned_url} target="_blank" rel="noopener noreferrer"
-                                className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-blue-50 rounded-xl border border-gray-100 hover:border-blue-100 transition-all group">
+                                className="flex items-center gap-3 p-3 bg-gray-50 hover-brand-soft-bg rounded-xl border border-gray-100 transition-all group">
                                 <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg>
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-xs font-semibold text-gray-700 truncate">{slot.file_name}</p>
-                                    <p className="text-xs text-blue-500 group-hover:underline mt-0.5">View PDF →</p>
+                                    <p className="text-xs brand-text group-hover:underline mt-0.5">View PDF →</p>
                                 </div>
                             </a>
                         )}
@@ -111,7 +111,7 @@ function UploadCard({ slot }: { slot: SlotItem }) {
                 <div className="mt-auto">
                     <input ref={fileRef} type="file" accept={ACCEPTED} className="hidden" onChange={handleChange} disabled={uploading} />
                     <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                        className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${slot.status === 'uploaded' ? 'bg-gray-100 hover:bg-gray-200 text-gray-700' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md'}`}>
+                        className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${slot.status === 'uploaded' ? 'bg-gray-100 hover:bg-gray-200 text-gray-700' : 'brand-primary text-white'}`}>
                         {uploading ? (
                             <><Spinner size="sm" /> Uploading…</>
                         ) : slot.status === 'uploaded' ? (
@@ -152,7 +152,7 @@ export default function Documents({ slots, completion_percentage, uploaded_slots
                             </p>
                         )}
                     </div>
-                    <div className={`text-3xl sm:text-4xl font-black ${allDone ? 'text-emerald-600' : 'text-blue-600'}`}>{completion_percentage}%</div>
+                    <div className={`text-3xl sm:text-4xl font-black ${allDone ? 'text-emerald-600' : 'brand-text'}`}>{completion_percentage}%</div>
                 </div>
                 <ProgressBar percentage={completion_percentage} />
             </div>

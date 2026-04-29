@@ -10,3 +10,78 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+:root {
+    --brand-color: #2d6ea0;
+    --brand-hover: color-mix(in srgb, var(--brand-color) 86%, #111827);
+    --brand-soft: color-mix(in srgb, var(--brand-color) 10%, white);
+    --brand-softer: color-mix(in srgb, var(--brand-color) 6%, white);
+    --brand-border: color-mix(in srgb, var(--brand-color) 24%, white);
+    --brand-text-soft: color-mix(in srgb, var(--brand-color) 16%, white);
+}
+
+.brand-gradient {
+    background:
+        linear-gradient(145deg,
+            color-mix(in srgb, var(--brand-color) 82%, #111827) 0%,
+            var(--brand-color) 48%,
+            color-mix(in srgb, var(--brand-color) 68%, white) 100%);
+}
+
+.brand-primary {
+    color: white;
+    background-color: var(--brand-color);
+    box-shadow: 0 10px 18px -12px color-mix(in srgb, var(--brand-color) 70%, black);
+}
+
+.brand-primary:hover:not(:disabled) {
+    background-color: var(--brand-hover);
+    box-shadow: 0 14px 24px -14px color-mix(in srgb, var(--brand-color) 78%, black);
+}
+
+.brand-secondary {
+    color: var(--brand-color);
+    background-color: var(--brand-soft);
+    border-color: var(--brand-border);
+}
+
+.brand-secondary:hover {
+    background-color: color-mix(in srgb, var(--brand-color) 15%, white);
+}
+
+.brand-field:focus {
+    border-color: var(--brand-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-color) 18%, transparent);
+}
+
+.brand-text {
+    color: var(--brand-color);
+}
+
+.hover-brand-text:hover {
+    color: var(--brand-color);
+}
+
+.brand-bg {
+    background-color: var(--brand-color);
+}
+
+.brand-soft-bg {
+    background-color: var(--brand-soft);
+}
+
+.hover-brand-soft-bg:hover {
+    background-color: var(--brand-soft);
+}
+
+.brand-soft-border {
+    border-color: var(--brand-border);
+}
+
+.hover-brand-soft-border:hover {
+    border-color: var(--brand-border);
+}
+
+.brand-row-hover:hover {
+    background-color: var(--brand-softer);
+}

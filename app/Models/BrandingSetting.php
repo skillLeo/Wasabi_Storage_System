@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
+
+class BrandingSetting extends Model
+{
+    protected $fillable = [
+        'logo_path',
+        'brand_color',
+        'logo_width_desktop',
+        'logo_width_mobile',
+        'logo_width_sidebar',
+        'logo_alt_text',
+        'login_headline',
+        'login_subheading',
+        'login_feature_one',
+        'login_feature_two',
+        'login_feature_three',
+        'login_form_title',
+        'login_form_subtitle',
+        'login_email_label',
+        'login_email_placeholder',
+        'login_password_label',
+        'login_password_placeholder',
+        'login_submit_text',
+        'login_submitting_text',
+        'login_help_text',
+    ];
+
+    protected $casts = [
+        'logo_width_desktop' => 'integer',
+        'logo_width_mobile' => 'integer',
+        'logo_width_sidebar' => 'integer',
+    ];
+
+    public static function defaults(): array
+    {
+        return [
+            'logo_path' => 'logo.png',
+            'brand_color' => '#2d6ea0',
+            'logo_width_desktop' => 260,
+            'logo_width_mobile' => 220,
+            'logo_width_sidebar' => 185,
+            'logo_alt_text' => 'No One Left Behind',
+            'login_headline' => 'Employee Document Portal',
+            'login_subheading' => 'Upload and manage your required company documents securely - all in one place.',
+            'login_feature_one' => 'Secure cloud storage',
+            'login_feature_two' => 'Upload in seconds',
+            'login_feature_three' => 'Track your progress',
+            'login_form_title' => 'Welcome back',
+            'login_form_subtitle' => 'Sign in to access your documents',
+            'login_email_label' => 'Email address',
+            'login_email_placeholder' => 'you@company.com',
+            'login_password_label' => 'Password',
+            'login_password_placeholder' => 'Password',
+            'login_submit_text' => 'Sign in',
+            'login_submitting_text' => 'Signing in...',
+            'login_help_text' => 'Need access? Contact your administrator.',
+        ];
+    }
+
+    public static function current(): self
+    {
+        return static::query()->first() ?? static::query()->create(static::defaults());
+    }
+
+    public static function publicDefaults(): array
+    {
+        $defaults = static::defaults();
+
+        return array_merge($defaults, [
+            'logo_url' => asset($defaults['logo_path']),
+            'version' => time(),
+        ]);
+    }
+
+    public function toPublicArray(): array
+    {
+        $logoPath = $this->logo_path ?: 'logo.png';
+        $version = $this->updated_at?->timestamp ?? time();
+
+        return array_merge(static::defaults(), $this->only($this->fillable), [
+            'logo_url' => asset($logoPath) . '?v=' . $version,
+            'version' => $version,
+        ]);
+    }
+
+    public static function shared(): array
+    {
+        if (!Schema::hasTable('branding_settings')) {
+            return static::publicDefaults();
+        }
+
+        return static::current()->toPublicArray();
+    }
+}

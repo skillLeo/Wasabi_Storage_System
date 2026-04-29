@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\BrandingSetting;
 use App\Models\Slot;
 use App\Models\User;
 use App\Models\UserSlot;
@@ -12,6 +13,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        BrandingSetting::query()->firstOrCreate([], BrandingSetting::defaults());
+
         // Create admin
         User::create([
             'name' => 'Admin',

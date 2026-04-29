@@ -2,6 +2,7 @@ import { useState, ReactNode, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import toast from 'react-hot-toast';
 import { useLogo } from '@/hooks/useLogo';
+import { useBrandTheme } from '@/hooks/useBrandTheme';
 
 const navLinks = [
     {
@@ -13,8 +14,16 @@ const navLinks = [
         icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
     },
     {
+        href: '/admin/progress', label: 'Document Progress',
+        icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6" /></svg>,
+    },
+    {
         href: '/admin/users', label: 'User Management',
         icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+    },
+    {
+        href: '/admin/branding', label: 'Branding',
+        icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828L11 18.657" /></svg>,
     },
     {
         href: '/admin/settings', label: 'Settings',
@@ -26,11 +35,17 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
     const { auth, url } = usePage().props as any;
     const currentUrl = (usePage() as any).url as string;
     const logoSrc = useLogo();
+    const { branding } = usePage().props as any;
 
     return (
         <aside className="flex flex-col h-full bg-white border-r border-gray-100 w-64 shadow-sm">
             <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100">
-                <img src={logoSrc} alt="No One Left Behind" style={{ width: 185, height: 'auto' }} className="object-contain block" />
+                <img
+                    src={logoSrc}
+                    alt={branding?.logo_alt_text ?? 'No One Left Behind'}
+                    style={{ width: branding?.logo_width_sidebar ?? 185, maxWidth: '100%', height: 'auto' }}
+                    className="object-contain block"
+                />
                 {onClose && (
                     <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors lg:hidden">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -47,10 +62,10 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
                     const active = currentUrl === link.href || currentUrl.startsWith(link.href + '/');
                     return (
                         <Link key={link.href} href={link.href} onClick={onClose}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${active ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
-                            <span className={`flex-shrink-0 ${active ? 'text-blue-600' : 'text-gray-400'}`}>{link.icon}</span>
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${active ? 'brand-secondary shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
+                            <span className={`flex-shrink-0 ${active ? 'brand-text' : 'text-gray-400'}`}>{link.icon}</span>
                             {link.label}
-                            {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500" />}
+                            {active && <span className="ml-auto w-1.5 h-1.5 rounded-full brand-bg" />}
                         </Link>
                     );
                 })}
@@ -58,7 +73,7 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
 
             <div className="px-4 py-4 border-t border-gray-100">
                 <div className="flex items-center gap-3 mb-3 px-1">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full brand-bg flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                         {auth.user?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
@@ -78,8 +93,9 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const [mobileOpen, setMobileOpen] = useState(false);
-    const { flash } = usePage().props as any;
+    const { flash, branding } = usePage().props as any;
     const logoSrc = useLogo();
+    useBrandTheme();
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -106,7 +122,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     <button onClick={() => setMobileOpen(true)} className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                     </button>
-                    <img src={logoSrc} alt="No One Left Behind" style={{ width: 150, height: 'auto' }} className="object-contain block" />
+                    <img src={logoSrc} alt={branding?.logo_alt_text ?? 'No One Left Behind'} style={{ width: 150, height: 'auto' }} className="object-contain block" />
                 </header>
                 <main className="flex-1 px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
                     {children}

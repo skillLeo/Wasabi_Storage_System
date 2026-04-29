@@ -31,7 +31,7 @@ export default function UserDetail({ employee, slots }: { employee: EmployeeDeta
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 mb-6">
                 <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-blue-600 flex items-center justify-center text-white text-lg sm:text-2xl font-bold flex-shrink-0 shadow-sm">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl brand-bg flex items-center justify-center text-white text-lg sm:text-2xl font-bold flex-shrink-0 shadow-sm">
                         {initials}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -42,7 +42,7 @@ export default function UserDetail({ employee, slots }: { employee: EmployeeDeta
                         <p className="text-xs sm:text-sm text-gray-500 truncate">{employee.email}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                        <p className={`text-2xl sm:text-3xl font-black ${employee.completion_percentage === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
+                        <p className={`text-2xl sm:text-3xl font-black ${employee.completion_percentage === 100 ? 'text-emerald-600' : 'brand-text'}`}>
                             {employee.completion_percentage}%
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5 whitespace-nowrap">{uploadedCount}/{slots.length} docs</p>
@@ -86,13 +86,13 @@ export default function UserDetail({ employee, slots }: { employee: EmployeeDeta
                                         </a>
                                     ) : slot.presigned_url ? (
                                         <a href={slot.presigned_url} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-blue-50 rounded-xl border border-gray-100 hover:border-blue-100 transition-all group">
+                                            className="flex items-center gap-3 p-3 bg-gray-50 hover-brand-soft-bg rounded-xl border border-gray-100 brand-row-hover transition-all group">
                                             <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
                                                 <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg>
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <p className="text-xs font-semibold text-gray-700 truncate">{slot.file_name}</p>
-                                                <p className="text-xs text-blue-500 group-hover:underline mt-0.5">View PDF →</p>
+                                                <p className="text-xs brand-text group-hover:underline mt-0.5">View PDF →</p>
                                             </div>
                                         </a>
                                     ) : null}

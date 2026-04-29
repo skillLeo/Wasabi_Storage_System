@@ -51,7 +51,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
                         <p className="text-sm text-gray-500 mt-1">{slots.length} document{slots.length !== 1 ? 's' : ''} assigned</p>
                     </div>
                     <button onClick={() => setShowAddModal(true)}
-                        className="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-all">
+                        className="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2.5 brand-primary text-white text-sm font-semibold rounded-xl transition-all">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         New Document
                     </button>
@@ -63,7 +63,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
                             <p className="text-sm font-medium text-gray-700">No documents defined yet</p>
                             <p className="text-xs text-gray-400 mt-1">Create your first document to get started</p>
                             <button onClick={() => setShowAddModal(true)}
-                                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
+                                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 brand-primary text-white text-sm font-semibold rounded-xl transition-colors">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Create first document
                             </button>
@@ -72,15 +72,15 @@ export default function Slots({ slots }: { slots: Slot[] }) {
                         <ul className="divide-y divide-gray-50">
                             {slots.map((slot, index) => (
                                 <li key={slot.id} className="group flex items-center gap-3 px-4 sm:px-6 py-4 hover:bg-gray-50/60 transition-colors">
-                                    <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold flex items-center justify-center flex-shrink-0">{index + 1}</span>
+                                    <span className="w-7 h-7 rounded-lg brand-secondary text-xs font-bold flex items-center justify-center flex-shrink-0">{index + 1}</span>
 
                                     {editingId === slot.id ? (
                                         <div className="flex-1 flex items-center gap-2">
                                             <input type="text" value={editForm.data.name} onChange={(e) => editForm.setData('name', e.target.value)}
-                                                className="flex-1 px-3 py-2 rounded-xl border border-blue-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-50/30"
+                                                className="flex-1 px-3 py-2 rounded-xl border text-sm focus:outline-none brand-field brand-soft-bg brand-soft-border"
                                                 autoFocus onKeyDown={(e) => { if (e.key === 'Enter') handleSaveEdit(slot); if (e.key === 'Escape') setEditingId(null); }} />
                                             <button onClick={() => handleSaveEdit(slot)} disabled={editForm.processing}
-                                                className="px-3 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50 transition-colors">
+                                                className="px-3 py-2 text-xs font-semibold text-white brand-primary rounded-lg disabled:opacity-50 transition-colors">
                                                 {editForm.processing ? 'Saving…' : 'Save'}
                                             </button>
                                             <button onClick={() => setEditingId(null)} className="px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
@@ -90,7 +90,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
                                             <span className="flex-1 text-sm font-medium text-gray-800">{slot.name}</span>
                                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button onClick={() => startEdit(slot)}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover-brand-text hover-brand-soft-bg rounded-lg transition-colors">
                                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     Rename
                                                 </button>
@@ -109,7 +109,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
                 </div>
 
                 {slots.length > 0 && (
-                    <div className="mt-4 flex items-start gap-2.5 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-700">
+                    <div className="mt-4 flex items-start gap-2.5 px-4 py-3 rounded-xl brand-soft-bg border brand-soft-border text-xs brand-text">
                         <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <span>New documents are automatically assigned to all existing employees. Hover a document to rename or delete it.</span>
                     </div>
@@ -122,13 +122,13 @@ export default function Slots({ slots }: { slots: Slot[] }) {
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Document name</label>
                     <input type="text" required autoFocus value={addForm.data.name} onChange={(e) => addForm.setData('name', e.target.value)}
                         placeholder="e.g. Passport Copy, Social Security Card"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all brand-field" />
                     {addForm.errors.name && <p className="text-xs text-red-600 mt-1">{addForm.errors.name}</p>}
                     <div className="flex gap-3 justify-end mt-6">
                         <button type="button" onClick={() => { setShowAddModal(false); addForm.reset(); }}
                             className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Cancel</button>
                         <button type="submit" disabled={addForm.processing || !addForm.data.name.trim()}
-                            className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl transition-colors flex items-center gap-2 shadow-sm">
+                            className="px-5 py-2.5 text-sm font-semibold text-white brand-primary disabled:opacity-50 rounded-xl transition-colors flex items-center gap-2">
                             {addForm.processing && <Spinner size="sm" />}
                             Create Document
                         </button>
