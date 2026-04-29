@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import Spinner from '@/Components/Spinner';
@@ -129,7 +129,7 @@ export default function Branding({ branding }: Props) {
     const logoSource = logoPreview ?? logoSrc;
 
     return (
-        <AdminLayout>
+        <>
             <div className="mb-8">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Branding</h1>
                 <p className="text-sm text-gray-500 mt-1">Manage logo, color, sizing, and login page content.</p>
@@ -324,6 +324,8 @@ export default function Branding({ branding }: Props) {
                     </section>
                 </div>
             </form>
-        </AdminLayout>
+        </>
     );
 }
+
+Branding.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

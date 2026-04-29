@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import Modal from '@/Components/Modal';
@@ -43,7 +43,7 @@ export default function Slots({ slots }: { slots: Slot[] }) {
     }
 
     return (
-        <AdminLayout>
+        <>
             <div className="max-w-2xl">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                     <div>
@@ -139,6 +139,8 @@ export default function Slots({ slots }: { slots: Slot[] }) {
             <ConfirmModal open={!!deleteTarget} title="Delete Document"
                 message={`Delete "${deleteTarget?.name}"? All uploaded files for this document will be permanently removed.`}
                 onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} loading={deleting} />
-        </AdminLayout>
+        </>
     );
 }
+
+Slots.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

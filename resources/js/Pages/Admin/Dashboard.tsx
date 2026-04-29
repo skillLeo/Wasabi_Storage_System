@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import ProgressBar from '@/Components/ProgressBar';
@@ -38,7 +39,7 @@ export default function Dashboard({ stats }: { stats: DashboardStats }) {
     ];
 
     return (
-        <AdminLayout>
+        <>
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">Admin overview</p>
@@ -111,6 +112,8 @@ export default function Dashboard({ stats }: { stats: DashboardStats }) {
                     </div>
                 </section>
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+Dashboard.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

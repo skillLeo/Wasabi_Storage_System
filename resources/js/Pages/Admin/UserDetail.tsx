@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import ProgressBar from '@/Components/ProgressBar';
@@ -23,7 +24,7 @@ export default function UserDetail({ employee, slots }: { employee: EmployeeDeta
     const initials = employee.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
 
     return (
-        <AdminLayout>
+        <>
             <Link href="/admin/users" className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 mb-6 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 Back to Users
@@ -110,6 +111,8 @@ export default function UserDetail({ employee, slots }: { employee: EmployeeDeta
                     </div>
                 ))}
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+UserDetail.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

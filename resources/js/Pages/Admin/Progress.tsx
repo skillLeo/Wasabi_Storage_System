@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import ProgressBar from '@/Components/ProgressBar';
@@ -68,7 +68,7 @@ export default function Progress({ employees }: { employees: Employee[] }) {
     }
 
     return (
-        <AdminLayout>
+        <>
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">Document tracking</p>
@@ -218,6 +218,8 @@ export default function Progress({ employees }: { employees: Employee[] }) {
                     </>
                 )}
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+Progress.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

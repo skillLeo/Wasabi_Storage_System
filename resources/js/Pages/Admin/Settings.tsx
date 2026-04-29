@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import Spinner from '@/Components/Spinner';
@@ -67,7 +68,7 @@ export default function Settings({ admin }: Props) {
     }
 
     return (
-        <AdminLayout>
+        <>
             <div className="mb-8">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Settings</h1>
                 <p className="text-sm text-gray-500 mt-1">Manage your account profile and security.</p>
@@ -183,6 +184,8 @@ export default function Settings({ admin }: Props) {
                     </form>
                 </div>
             </div>
-        </AdminLayout>
+        </>
     );
 }
+
+Settings.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

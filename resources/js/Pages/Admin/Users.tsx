@@ -159,7 +159,7 @@ export default function Users({ employees }: { employees: Employee[] }) {
     }
 
     return (
-        <AdminLayout>
+        <>
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">Team access</p>
@@ -394,6 +394,8 @@ export default function Users({ employees }: { employees: Employee[] }) {
                 onCancel={() => setDeleteTarget(null)}
                 loading={deleting}
             />
-        </AdminLayout>
+        </>
     );
 }
+
+Users.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;
