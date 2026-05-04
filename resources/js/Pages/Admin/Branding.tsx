@@ -25,6 +25,27 @@ interface BrandingData {
     login_submit_text: string;
     login_submitting_text: string;
     login_help_text: string;
+    login_forgot_password_text: string;
+    forgot_title: string;
+    forgot_panel_headline: string;
+    forgot_panel_subheading: string;
+    forgot_subtitle: string;
+    forgot_email_label: string;
+    forgot_email_placeholder: string;
+    forgot_submit_text: string;
+    forgot_submitting_text: string;
+    forgot_back_text: string;
+    reset_badge_text: string;
+    reset_title: string;
+    reset_description: string;
+    reset_email_label: string;
+    reset_new_password_label: string;
+    reset_new_password_placeholder: string;
+    reset_confirm_label: string;
+    reset_confirm_placeholder: string;
+    reset_submit_text: string;
+    reset_submitting_text: string;
+    reset_back_text: string;
 }
 
 interface BrandingForm extends Omit<BrandingData, 'logo_url'> {
@@ -101,6 +122,27 @@ export default function Branding({ branding }: Props) {
         login_submit_text: branding.login_submit_text,
         login_submitting_text: branding.login_submitting_text,
         login_help_text: branding.login_help_text,
+        login_forgot_password_text: branding.login_forgot_password_text,
+        forgot_title: branding.forgot_title,
+        forgot_panel_headline: branding.forgot_panel_headline,
+        forgot_panel_subheading: branding.forgot_panel_subheading,
+        forgot_subtitle: branding.forgot_subtitle,
+        forgot_email_label: branding.forgot_email_label,
+        forgot_email_placeholder: branding.forgot_email_placeholder,
+        forgot_submit_text: branding.forgot_submit_text,
+        forgot_submitting_text: branding.forgot_submitting_text,
+        forgot_back_text: branding.forgot_back_text,
+        reset_badge_text: branding.reset_badge_text,
+        reset_title: branding.reset_title,
+        reset_description: branding.reset_description,
+        reset_email_label: branding.reset_email_label,
+        reset_new_password_label: branding.reset_new_password_label,
+        reset_new_password_placeholder: branding.reset_new_password_placeholder,
+        reset_confirm_label: branding.reset_confirm_label,
+        reset_confirm_placeholder: branding.reset_confirm_placeholder,
+        reset_submit_text: branding.reset_submit_text,
+        reset_submitting_text: branding.reset_submitting_text,
+        reset_back_text: branding.reset_back_text,
     });
 
     function handleLogoChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -320,6 +362,80 @@ export default function Branding({ branding }: Props) {
                             <Field label="Feature 1" value={form.data.login_feature_one} onChange={(value) => form.setData('login_feature_one', value)} error={form.errors.login_feature_one} maxLength={80} />
                             <Field label="Feature 2" value={form.data.login_feature_two} onChange={(value) => form.setData('login_feature_two', value)} error={form.errors.login_feature_two} maxLength={80} />
                             <Field label="Feature 3" value={form.data.login_feature_three} onChange={(value) => form.setData('login_feature_three', value)} error={form.errors.login_feature_three} maxLength={80} />
+                        </div>
+                    </section>
+
+                    <section className="border-t border-gray-100 pt-8">
+                        <SectionTitle title="Forgot Password Page" desc="Edit all text shown on the forgot password page." />
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <Field label="Left Panel Headline" value={form.data.forgot_panel_headline} onChange={(value) => form.setData('forgot_panel_headline', value)} error={form.errors.forgot_panel_headline} maxLength={120} />
+                            <Field label="Forgot Password Link Text (on Login)" value={form.data.login_forgot_password_text} onChange={(value) => form.setData('login_forgot_password_text', value)} error={form.errors.login_forgot_password_text} maxLength={60} />
+
+                            <div className="lg:col-span-2">
+                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Left Panel Subheading</label>
+                                <textarea
+                                    required
+                                    maxLength={300}
+                                    rows={2}
+                                    value={form.data.forgot_panel_subheading}
+                                    onChange={(event) => form.setData('forgot_panel_subheading', event.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
+                                />
+                                {form.errors.forgot_panel_subheading && <p className="text-xs text-red-500 mt-1">{form.errors.forgot_panel_subheading}</p>}
+                            </div>
+
+                            <Field label="Form Title" value={form.data.forgot_title} onChange={(value) => form.setData('forgot_title', value)} error={form.errors.forgot_title} maxLength={80} />
+
+                            <div className="lg:col-span-2">
+                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Form Subtitle</label>
+                                <textarea
+                                    required
+                                    maxLength={300}
+                                    rows={2}
+                                    value={form.data.forgot_subtitle}
+                                    onChange={(event) => form.setData('forgot_subtitle', event.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
+                                />
+                                {form.errors.forgot_subtitle && <p className="text-xs text-red-500 mt-1">{form.errors.forgot_subtitle}</p>}
+                            </div>
+
+                            <Field label="Email Label" value={form.data.forgot_email_label} onChange={(value) => form.setData('forgot_email_label', value)} error={form.errors.forgot_email_label} maxLength={60} />
+                            <Field label="Email Placeholder" value={form.data.forgot_email_placeholder} onChange={(value) => form.setData('forgot_email_placeholder', value)} error={form.errors.forgot_email_placeholder} maxLength={120} />
+                            <Field label="Submit Button" value={form.data.forgot_submit_text} onChange={(value) => form.setData('forgot_submit_text', value)} error={form.errors.forgot_submit_text} maxLength={40} />
+                            <Field label="Submitting Text" value={form.data.forgot_submitting_text} onChange={(value) => form.setData('forgot_submitting_text', value)} error={form.errors.forgot_submitting_text} maxLength={60} />
+                            <Field label="Back Link Text" value={form.data.forgot_back_text} onChange={(value) => form.setData('forgot_back_text', value)} error={form.errors.forgot_back_text} maxLength={60} />
+                        </div>
+                    </section>
+
+                    <section className="border-t border-gray-100 pt-8">
+                        <SectionTitle title="Reset Password Page" desc="Edit all text shown on the reset password page." />
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <Field label="Badge Text" value={form.data.reset_badge_text} onChange={(value) => form.setData('reset_badge_text', value)} error={form.errors.reset_badge_text} maxLength={60} />
+                            <Field label="Page Title" value={form.data.reset_title} onChange={(value) => form.setData('reset_title', value)} error={form.errors.reset_title} maxLength={80} />
+
+                            <div className="lg:col-span-2">
+                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Page Description</label>
+                                <textarea
+                                    required
+                                    maxLength={300}
+                                    rows={2}
+                                    value={form.data.reset_description}
+                                    onChange={(event) => form.setData('reset_description', event.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
+                                />
+                                {form.errors.reset_description && <p className="text-xs text-red-500 mt-1">{form.errors.reset_description}</p>}
+                            </div>
+
+                            <Field label="Email Field Label" value={form.data.reset_email_label} onChange={(value) => form.setData('reset_email_label', value)} error={form.errors.reset_email_label} maxLength={60} />
+                            <Field label="New Password Label" value={form.data.reset_new_password_label} onChange={(value) => form.setData('reset_new_password_label', value)} error={form.errors.reset_new_password_label} maxLength={60} />
+                            <Field label="New Password Placeholder" value={form.data.reset_new_password_placeholder} onChange={(value) => form.setData('reset_new_password_placeholder', value)} error={form.errors.reset_new_password_placeholder} maxLength={120} />
+                            <Field label="Confirm Password Label" value={form.data.reset_confirm_label} onChange={(value) => form.setData('reset_confirm_label', value)} error={form.errors.reset_confirm_label} maxLength={60} />
+                            <Field label="Confirm Password Placeholder" value={form.data.reset_confirm_placeholder} onChange={(value) => form.setData('reset_confirm_placeholder', value)} error={form.errors.reset_confirm_placeholder} maxLength={120} />
+                            <Field label="Submit Button" value={form.data.reset_submit_text} onChange={(value) => form.setData('reset_submit_text', value)} error={form.errors.reset_submit_text} maxLength={40} />
+                            <Field label="Submitting Text" value={form.data.reset_submitting_text} onChange={(value) => form.setData('reset_submitting_text', value)} error={form.errors.reset_submitting_text} maxLength={60} />
+                            <Field label="Back Link Text" value={form.data.reset_back_text} onChange={(value) => form.setData('reset_back_text', value)} error={form.errors.reset_back_text} maxLength={60} />
                         </div>
                     </section>
                 </div>

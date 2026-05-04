@@ -22,13 +22,14 @@ interface Branding {
     login_submit_text: string;
     login_submitting_text: string;
     login_help_text: string;
+    login_forgot_password_text: string;
 }
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors } = useForm({ email: '', password: '' });
     const logoSrc = useLogo();
-    const { branding, flash } = usePage().props as { branding: Branding; flash?: { success?: string } };
+    const { branding, flash } = usePage().props as unknown as { branding: Branding; flash?: { success?: string } };
     useBrandTheme();
     const features = [
         branding.login_feature_one,
@@ -123,7 +124,7 @@ export default function Login() {
                             <div className="flex items-center justify-between gap-3 mb-1.5">
                                 <label className="block text-sm font-medium text-gray-700">{branding.login_password_label}</label>
                                 <Link href="/forgot-password" className="text-xs font-semibold brand-text">
-                                    Forgot password?
+                                    {branding.login_forgot_password_text}
                                 </Link>
                             </div>
                             <div className="relative">
