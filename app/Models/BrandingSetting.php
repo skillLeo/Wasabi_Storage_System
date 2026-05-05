@@ -136,7 +136,10 @@ class BrandingSetting extends Model
         $logoPath = $this->logo_path ?: 'logo.png';
         $version = $this->updated_at?->timestamp ?? time();
 
-        return array_merge(static::defaults(), $this->only($this->fillable), [
+        // Filter nulls so newly-added columns don't wipe out defaults for existing rows
+        $stored = array_filter($this->only($this->fillable), fn($v) => !is_null($v));
+
+        return array_merge(static::defaults(), $stored, [
             'logo_url' => asset($logoPath) . '?v=' . $version,
             'version' => $version,
         ]);
