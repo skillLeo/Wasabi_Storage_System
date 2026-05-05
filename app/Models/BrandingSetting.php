@@ -49,6 +49,12 @@ class BrandingSetting extends Model
         'reset_submit_text',
         'reset_submitting_text',
         'reset_back_text',
+        'email_reset_subject',
+        'email_reset_greeting',
+        'email_reset_intro',
+        'email_reset_button',
+        'email_reset_expire',
+        'email_reset_no_action',
     ];
 
     protected $casts = [
@@ -101,6 +107,12 @@ class BrandingSetting extends Model
             'reset_submit_text' => 'Reset Password',
             'reset_submitting_text' => 'Resetting...',
             'reset_back_text' => 'Back to sign in',
+            'email_reset_subject' => 'Reset Your Password',
+            'email_reset_greeting' => 'Hello!',
+            'email_reset_intro' => 'You are receiving this email because we received a password reset request for your account.',
+            'email_reset_button' => 'Reset Password',
+            'email_reset_expire' => 'This password reset link will expire in 60 minutes.',
+            'email_reset_no_action' => 'If you did not request a password reset, no further action is required.',
         ];
     }
 

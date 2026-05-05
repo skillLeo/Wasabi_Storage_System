@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Support\WindowsSafeFilesystem;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Lower bcrypt cost on Windows/XAMPP to avoid max_execution_time timeout
+        Hash::setRounds(10);
     }
 }

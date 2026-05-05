@@ -115,9 +115,10 @@ class UserController extends Controller
             'email'     => 'sometimes|email|unique:users,email,' . $user->id,
             'password'  => 'sometimes|nullable|string|min:6',
             'is_active' => 'sometimes|boolean',
+            'role'      => 'sometimes|in:employee,admin',
         ]);
 
-        $data = $request->only(['name', 'email', 'is_active']);
+        $data = $request->only(['name', 'email', 'is_active', 'role']);
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }

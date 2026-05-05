@@ -15,12 +15,26 @@ class DatabaseSeeder extends Seeder
     {
         BrandingSetting::query()->firstOrCreate([], BrandingSetting::defaults());
 
+        // Easy-access test credentials
+        User::updateOrCreate(['email' => 'admin@example.com'], [
+            'name'      => 'Admin',
+            'password'  => Hash::make('password'),
+            'role'      => 'admin',
+            'is_active' => true,
+        ]);
+
+        User::updateOrCreate(['email' => 'user@example.com'], [
+            'name'      => 'Test Employee',
+            'password'  => Hash::make('password'),
+            'role'      => 'employee',
+            'is_active' => true,
+        ]);
+
         // Create admin
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@no1leftbehind.us',
-            'password' => Hash::make('Admin@1234'),
-            'role' => 'admin',
+        User::updateOrCreate(['email' => 'admin@no1leftbehind.us'], [
+            'name'      => 'Admin',
+            'password'  => Hash::make('Admin@1234'),
+            'role'      => 'admin',
             'is_active' => true,
         ]);
 
@@ -41,11 +55,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($employees as $employeeData) {
-            $employee = User::create([
-                'name' => $employeeData['name'],
-                'email' => $employeeData['email'],
-                'password' => Hash::make($employeeData['password']),
-                'role' => 'employee',
+            $employee = User::updateOrCreate(['email' => $employeeData['email']], [
+                'name'      => $employeeData['name'],
+                'password'  => Hash::make($employeeData['password']),
+                'role'      => 'employee',
                 'is_active' => true,
             ]);
 

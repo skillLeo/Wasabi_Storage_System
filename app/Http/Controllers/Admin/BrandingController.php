@@ -60,6 +60,12 @@ class BrandingController extends Controller
             'reset_submit_text' => 'required|string|max:40',
             'reset_submitting_text' => 'required|string|max:60',
             'reset_back_text' => 'required|string|max:60',
+            'email_reset_subject' => 'required|string|max:120',
+            'email_reset_greeting' => 'required|string|max:80',
+            'email_reset_intro' => 'required|string|max:500',
+            'email_reset_button' => 'required|string|max:60',
+            'email_reset_expire' => 'required|string|max:300',
+            'email_reset_no_action' => 'required|string|max:300',
         ]);
 
         unset($validated['logo']);

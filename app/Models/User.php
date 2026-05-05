@@ -38,6 +38,11 @@ class User extends Authenticatable
         return $this->hasMany(UserSlot::class);
     }
 
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
     public function completionPercentage(): float
     {
         $total = $this->userSlots()->count();

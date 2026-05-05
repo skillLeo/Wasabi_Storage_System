@@ -4,6 +4,8 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import Spinner from '@/Components/Spinner';
 import { useLogo } from '@/hooks/useLogo';
 
+type Tab = 'identity' | 'login' | 'forgot' | 'reset' | 'email';
+
 interface BrandingData {
     logo_url: string;
     brand_color: string;
@@ -46,60 +48,71 @@ interface BrandingData {
     reset_submit_text: string;
     reset_submitting_text: string;
     reset_back_text: string;
+    email_reset_subject: string;
+    email_reset_greeting: string;
+    email_reset_intro: string;
+    email_reset_button: string;
+    email_reset_expire: string;
+    email_reset_no_action: string;
 }
 
 interface BrandingForm extends Omit<BrandingData, 'logo_url'> {
     logo: File | null;
 }
 
-interface Props {
-    branding: BrandingData;
-}
+interface Props { branding: BrandingData; }
 
-function Field({
-    label,
-    value,
-    onChange,
-    error,
-    maxLength,
-    type = 'text',
-}: {
-    label: string;
-    value: string | number;
-    onChange: (value: string) => void;
-    error?: string;
-    maxLength?: number;
-    type?: string;
+function Field({ label, value, onChange, error, maxLength, type = 'text' }: {
+    label: string; value: string | number; onChange: (v: string) => void;
+    error?: string; maxLength?: number; type?: string;
 }) {
     return (
         <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">{label}</label>
             <input
                 type={type}
-                required
-                maxLength={maxLength}
                 value={value}
-                onChange={(event) => onChange(event.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all brand-field"
+                onChange={(e) => onChange(e.target.value)}
+                maxLength={maxLength}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all brand-field"
             />
             {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
     );
 }
 
-function SectionTitle({ title, desc }: { title: string; desc: string }) {
+function Textarea({ label, value, onChange, error, maxLength, rows = 2 }: {
+    label: string; value: string; onChange: (v: string) => void;
+    error?: string; maxLength?: number; rows?: number;
+}) {
     return (
-        <div className="mb-5">
-            <h2 className="text-lg font-bold text-gray-950">{title}</h2>
-            <p className="text-sm text-gray-500 mt-1">{desc}</p>
+        <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">{label}</label>
+            <textarea
+                maxLength={maxLength}
+                rows={rows}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
+            />
+            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
     );
 }
+
+const TABS: { id: Tab; label: string }[] = [
+    { id: 'identity',  label: 'Brand Identity' },
+    { id: 'login',     label: 'Login Page' },
+    { id: 'forgot',    label: 'Forgot Password' },
+    { id: 'reset',     label: 'Reset Password' },
+    { id: 'email',     label: 'Reset Email' },
+];
 
 export default function Branding({ branding }: Props) {
     const logoRef = useRef<HTMLInputElement>(null);
     const logoSrc = useLogo();
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<Tab>('identity');
 
     const form = useForm<BrandingForm>({
         logo: null,
@@ -143,19 +156,23 @@ export default function Branding({ branding }: Props) {
         reset_submit_text: branding.reset_submit_text,
         reset_submitting_text: branding.reset_submitting_text,
         reset_back_text: branding.reset_back_text,
+        email_reset_subject: branding.email_reset_subject,
+        email_reset_greeting: branding.email_reset_greeting,
+        email_reset_intro: branding.email_reset_intro,
+        email_reset_button: branding.email_reset_button,
+        email_reset_expire: branding.email_reset_expire,
+        email_reset_no_action: branding.email_reset_no_action,
     });
 
-    function handleLogoChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const file = event.target.files?.[0];
+    function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
         if (!file) return;
-
         form.setData('logo', file);
         setLogoPreview(URL.createObjectURL(file));
     }
 
-    function submit(event: React.FormEvent) {
-        event.preventDefault();
-
+    function submit(e: React.FormEvent) {
+        e.preventDefault();
         form.post('/admin/branding', {
             forceFormData: true,
             preserveScroll: true,
@@ -172,272 +189,223 @@ export default function Branding({ branding }: Props) {
 
     return (
         <>
-            <div className="mb-8">
+            <div className="mb-6">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Branding</h1>
-                <p className="text-sm text-gray-500 mt-1">Manage logo, color, sizing, and login page content.</p>
+                <p className="text-sm text-gray-500 mt-1">Manage logo, colors, and all page content.</p>
             </div>
 
             <form
                 onSubmit={submit}
-                className="max-w-6xl bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
                 style={{ ['--brand-color' as any]: form.data.brand_color }}
             >
-                <div className="px-5 sm:px-7 py-5 border-b border-gray-100 bg-white">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h2 className="text-lg font-bold text-gray-950">Brand Settings</h2>
-                            <p className="text-sm text-gray-500 mt-1">Changes apply across login, admin, and employee views.</p>
+                {/* Sticky header with tabs + save button */}
+                <div className="sticky top-0 z-10 bg-white border-b border-gray-100">
+                    <div className="px-5 sm:px-7 py-3 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide -mx-1 px-1">
+                            {TABS.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`whitespace-nowrap px-4 py-2 text-xs font-semibold rounded-xl transition-all flex-shrink-0 ${
+                                        activeTab === tab.id
+                                            ? 'brand-primary text-white'
+                                            : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
                         </div>
                         <button
                             type="submit"
                             disabled={form.processing}
-                            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white brand-primary disabled:opacity-60 rounded-xl transition-all"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white brand-primary disabled:opacity-60 rounded-xl transition-all flex-shrink-0"
                         >
-                            {form.processing && <Spinner size="sm" />}
-                            Save Branding
+                            {form.processing ? <><Spinner size="sm" /> Saving…</> : 'Save Changes'}
                         </button>
                     </div>
                 </div>
 
-                <div className="p-5 sm:p-7 space-y-8">
-                    <section>
-                        <SectionTitle title="Brand Identity" desc="Upload the logo, choose the main brand color, and tune logo sizes." />
+                <div className="p-5 sm:p-7">
 
-                        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.35fr)_360px] gap-6">
-                            <div className="space-y-5">
-                                <input
-                                    ref={logoRef}
-                                    type="file"
-                                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
-                                    className="hidden"
-                                    onChange={handleLogoChange}
-                                />
+                    {/* ── TAB: Brand Identity ── */}
+                    {activeTab === 'identity' && (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.4fr)_340px] gap-6">
+                                {/* Logo upload */}
+                                <div className="space-y-4">
+                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Logo</p>
+                                    <input ref={logoRef} type="file" accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp" className="hidden" onChange={handleLogoChange} />
+                                    <button type="button" onClick={() => logoRef.current?.click()}
+                                        className="w-full min-h-52 rounded-2xl border border-dashed brand-soft-border bg-gray-50 hover-brand-soft-bg transition-colors flex flex-col items-center justify-center px-6 py-6 text-center">
+                                        <span className="h-10 w-10 rounded-full brand-soft-bg brand-text flex items-center justify-center mb-4">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                        </span>
+                                        <img src={logoSource} alt={form.data.logo_alt_text}
+                                            style={{ width: Math.min(form.data.logo_width_desktop, 260), maxWidth: '100%', height: 'auto' }}
+                                            className="object-contain block mb-4" />
+                                        <span className="text-sm font-semibold text-gray-900">{logoPreview ? 'New logo selected' : 'Click to upload logo'}</span>
+                                        <span className="text-xs text-gray-400 mt-1">PNG, JPG, SVG or WebP · Max 2 MB</span>
+                                    </button>
+                                    {form.errors.logo && <p className="text-xs text-red-500">{form.errors.logo}</p>}
 
-                                <button
-                                    type="button"
-                                    onClick={() => logoRef.current?.click()}
-                                    className="w-full min-h-64 rounded-2xl border border-dashed brand-soft-border bg-gray-50 hover-brand-soft-bg transition-colors flex flex-col items-center justify-center px-6 py-8 text-center"
-                                >
-                                    <span className="h-12 w-12 rounded-full brand-soft-bg brand-text flex items-center justify-center mb-5">
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                                    </span>
-                                    <img
-                                        src={logoSource}
-                                        alt={form.data.logo_alt_text}
-                                        style={{ width: Math.min(form.data.logo_width_desktop, 280), maxWidth: '100%', height: 'auto' }}
-                                        className="object-contain block mb-5"
-                                    />
-                                    <span className="text-sm font-semibold text-gray-900">{logoPreview ? 'New logo selected' : 'Click to upload your logo'}</span>
-                                    <span className="text-xs text-gray-500 mt-1">PNG, JPG, SVG or WebP. Max 2 MB.</span>
-                                </button>
-                                {form.errors.logo && <p className="text-xs text-red-500">{form.errors.logo}</p>}
-                                {form.data.logo && (
-                                    <p className="text-xs text-gray-500">
-                                        Selected: {form.data.logo.name} - {(form.data.logo.size / 1024).toFixed(0)} KB
-                                    </p>
-                                )}
-
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <Field
-                                        label="Desktop Login Width"
-                                        type="number"
-                                        value={form.data.logo_width_desktop}
-                                        onChange={(value) => form.setData('logo_width_desktop', Number(value))}
-                                        error={form.errors.logo_width_desktop}
-                                    />
-                                    <Field
-                                        label="Mobile Login Width"
-                                        type="number"
-                                        value={form.data.logo_width_mobile}
-                                        onChange={(value) => form.setData('logo_width_mobile', Number(value))}
-                                        error={form.errors.logo_width_mobile}
-                                    />
-                                    <Field
-                                        label="Logo Alt Text"
-                                        value={form.data.logo_alt_text}
-                                        onChange={(value) => form.setData('logo_alt_text', value)}
-                                        error={form.errors.logo_alt_text}
-                                        maxLength={120}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-5">
-                                <div>
-                                    <h3 className="text-sm font-bold text-gray-900 mb-3">Color Palette</h3>
-                                    <div className="rounded-2xl border border-dashed border-gray-200 p-4 space-y-3">
-                                        <label className="block">
-                                            <span className="sr-only">Brand color</span>
-                                            <div className="brand-primary rounded-xl px-4 py-4 flex items-center justify-between gap-3 cursor-pointer">
-                                                <span className="text-sm font-semibold text-white">Click to select color</span>
-                                                <input
-                                                    type="color"
-                                                    value={form.data.brand_color}
-                                                    onChange={(event) => form.setData('brand_color', event.target.value)}
-                                                    className="h-9 w-12 rounded-lg border border-white/30 bg-transparent cursor-pointer"
-                                                />
-                                            </div>
-                                        </label>
-                                        <Field
-                                            label="Hex Value"
-                                            value={form.data.brand_color}
-                                            onChange={(value) => form.setData('brand_color', value)}
-                                            error={form.errors.brand_color}
-                                            maxLength={7}
-                                        />
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="rounded-xl border brand-soft-border brand-soft-bg p-3">
-                                                <p className="text-xs font-semibold brand-text">Soft Accent</p>
-                                            </div>
-                                            <div className="rounded-xl brand-gradient p-3">
-                                                <p className="text-xs font-semibold text-white">Login Panel</p>
-                                            </div>
-                                        </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <Field label="Desktop Login Width (px)" type="number" value={form.data.logo_width_desktop}
+                                            onChange={(v) => form.setData('logo_width_desktop', Number(v))} error={form.errors.logo_width_desktop} />
+                                        <Field label="Mobile Login Width (px)" type="number" value={form.data.logo_width_mobile}
+                                            onChange={(v) => form.setData('logo_width_mobile', Number(v))} error={form.errors.logo_width_mobile} />
+                                        <Field label="Logo Alt Text" value={form.data.logo_alt_text}
+                                            onChange={(v) => form.setData('logo_alt_text', v)} error={form.errors.logo_alt_text} maxLength={120} />
                                     </div>
                                 </div>
 
-                                <div>
-                                    <h3 className="text-sm font-bold text-gray-900 mb-3">Sidebar Logo</h3>
-                                    <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                                        <div className="bg-white rounded-xl border border-gray-100 h-28 flex items-center justify-center px-5 mb-4">
-                                            <img
-                                                src={logoSource}
-                                                alt={form.data.logo_alt_text}
-                                                style={{ width: form.data.logo_width_sidebar, maxWidth: '100%', height: 'auto' }}
-                                                className="object-contain block"
-                                            />
+                                {/* Color + sidebar */}
+                                <div className="space-y-5">
+                                    <div>
+                                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Brand Color</p>
+                                        <div className="rounded-2xl border border-dashed border-gray-200 p-4 space-y-3">
+                                            <label className="block">
+                                                <div className="brand-primary rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 cursor-pointer">
+                                                    <span className="text-sm font-semibold text-white">Click to pick color</span>
+                                                    <input type="color" value={form.data.brand_color}
+                                                        onChange={(e) => form.setData('brand_color', e.target.value)}
+                                                        className="h-8 w-10 rounded-lg border border-white/30 bg-transparent cursor-pointer" />
+                                                </div>
+                                            </label>
+                                            <Field label="Hex Value" value={form.data.brand_color}
+                                                onChange={(v) => form.setData('brand_color', v)} error={form.errors.brand_color} maxLength={7} />
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="rounded-xl border brand-soft-border brand-soft-bg p-3">
+                                                    <p className="text-xs font-semibold brand-text">Soft Accent</p>
+                                                </div>
+                                                <div className="rounded-xl brand-gradient p-3">
+                                                    <p className="text-xs font-semibold text-white">Login Panel</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between gap-3 mb-3">
-                                            <span className="text-xs font-semibold text-gray-600">Width</span>
-                                            <span className="text-xs font-bold brand-text">{form.data.logo_width_sidebar}px</span>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Sidebar Logo Width</p>
+                                        <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                                            <div className="bg-white rounded-xl border border-gray-100 h-24 flex items-center justify-center px-5 mb-3">
+                                                <img src={logoSource} alt={form.data.logo_alt_text}
+                                                    style={{ width: form.data.logo_width_sidebar, maxWidth: '100%', height: 'auto' }}
+                                                    className="object-contain block" />
+                                            </div>
+                                            <div className="flex justify-between mb-2">
+                                                <span className="text-xs font-semibold text-gray-600">Width</span>
+                                                <span className="text-xs font-bold brand-text">{form.data.logo_width_sidebar}px</span>
+                                            </div>
+                                            <input type="range" min={80} max={240} step={1} value={form.data.logo_width_sidebar}
+                                                onChange={(e) => form.setData('logo_width_sidebar', Number(e.target.value))}
+                                                className="w-full accent-[var(--brand-color)]" />
+                                            {form.errors.logo_width_sidebar && <p className="text-xs text-red-500 mt-1">{form.errors.logo_width_sidebar}</p>}
                                         </div>
-                                        <input
-                                            type="range"
-                                            min={80}
-                                            max={240}
-                                            step={1}
-                                            value={form.data.logo_width_sidebar}
-                                            onChange={(event) => form.setData('logo_width_sidebar', Number(event.target.value))}
-                                            className="w-full accent-[var(--brand-color)]"
-                                        />
-                                        {form.errors.logo_width_sidebar && <p className="text-xs text-red-500 mt-1">{form.errors.logo_width_sidebar}</p>}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    )}
 
-                    <section className="border-t border-gray-100 pt-8">
-                        <SectionTitle title="Login Content" desc="Edit the headline, supporting text, feature list, form labels, and helper text." />
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <Field label="Main Headline" value={form.data.login_headline} onChange={(value) => form.setData('login_headline', value)} error={form.errors.login_headline} maxLength={120} />
-                            <Field label="Form Title" value={form.data.login_form_title} onChange={(value) => form.setData('login_form_title', value)} error={form.errors.login_form_title} maxLength={80} />
-
-                            <div className="lg:col-span-2">
-                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Main Subheading</label>
-                                <textarea
-                                    required
-                                    maxLength={500}
-                                    rows={3}
-                                    value={form.data.login_subheading}
-                                    onChange={(event) => form.setData('login_subheading', event.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
-                                />
-                                {form.errors.login_subheading && <p className="text-xs text-red-500 mt-1">{form.errors.login_subheading}</p>}
+                    {/* ── TAB: Login Page ── */}
+                    {activeTab === 'login' && (
+                        <div className="space-y-4">
+                            <p className="text-xs text-gray-400 mb-2">Edit every word on the login page — left panel and right form.</p>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <Field label="Left Panel Headline" value={form.data.login_headline} onChange={(v) => form.setData('login_headline', v)} error={form.errors.login_headline} maxLength={120} />
+                                <Field label="Form Title" value={form.data.login_form_title} onChange={(v) => form.setData('login_form_title', v)} error={form.errors.login_form_title} maxLength={80} />
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Left Panel Subheading" value={form.data.login_subheading} onChange={(v) => form.setData('login_subheading', v)} error={form.errors.login_subheading} maxLength={500} rows={2} />
+                                </div>
+                                <Field label="Form Subtitle" value={form.data.login_form_subtitle} onChange={(v) => form.setData('login_form_subtitle', v)} error={form.errors.login_form_subtitle} maxLength={160} />
+                                <Field label="Help Text (below button)" value={form.data.login_help_text} onChange={(v) => form.setData('login_help_text', v)} error={form.errors.login_help_text} maxLength={160} />
+                                <Field label="Email Label" value={form.data.login_email_label} onChange={(v) => form.setData('login_email_label', v)} error={form.errors.login_email_label} maxLength={60} />
+                                <Field label="Email Placeholder" value={form.data.login_email_placeholder} onChange={(v) => form.setData('login_email_placeholder', v)} error={form.errors.login_email_placeholder} maxLength={120} />
+                                <Field label="Password Label" value={form.data.login_password_label} onChange={(v) => form.setData('login_password_label', v)} error={form.errors.login_password_label} maxLength={60} />
+                                <Field label="Password Placeholder" value={form.data.login_password_placeholder} onChange={(v) => form.setData('login_password_placeholder', v)} error={form.errors.login_password_placeholder} maxLength={120} />
+                                <Field label="Forgot Password Link Text" value={form.data.login_forgot_password_text} onChange={(v) => form.setData('login_forgot_password_text', v)} error={form.errors.login_forgot_password_text} maxLength={60} />
+                                <Field label="Submit Button" value={form.data.login_submit_text} onChange={(v) => form.setData('login_submit_text', v)} error={form.errors.login_submit_text} maxLength={40} />
+                                <Field label="Submitting Text" value={form.data.login_submitting_text} onChange={(v) => form.setData('login_submitting_text', v)} error={form.errors.login_submitting_text} maxLength={60} />
                             </div>
-
-                            <Field label="Form Subtitle" value={form.data.login_form_subtitle} onChange={(value) => form.setData('login_form_subtitle', value)} error={form.errors.login_form_subtitle} maxLength={160} />
-                            <Field label="Help Text" value={form.data.login_help_text} onChange={(value) => form.setData('login_help_text', value)} error={form.errors.login_help_text} maxLength={160} />
-
-                            <Field label="Email Label" value={form.data.login_email_label} onChange={(value) => form.setData('login_email_label', value)} error={form.errors.login_email_label} maxLength={60} />
-                            <Field label="Email Placeholder" value={form.data.login_email_placeholder} onChange={(value) => form.setData('login_email_placeholder', value)} error={form.errors.login_email_placeholder} maxLength={120} />
-                            <Field label="Password Label" value={form.data.login_password_label} onChange={(value) => form.setData('login_password_label', value)} error={form.errors.login_password_label} maxLength={60} />
-                            <Field label="Password Placeholder" value={form.data.login_password_placeholder} onChange={(value) => form.setData('login_password_placeholder', value)} error={form.errors.login_password_placeholder} maxLength={120} />
-                            <Field label="Submit Button" value={form.data.login_submit_text} onChange={(value) => form.setData('login_submit_text', value)} error={form.errors.login_submit_text} maxLength={40} />
-                            <Field label="Submitting Text" value={form.data.login_submitting_text} onChange={(value) => form.setData('login_submitting_text', value)} error={form.errors.login_submitting_text} maxLength={60} />
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
-                            <Field label="Feature 1" value={form.data.login_feature_one} onChange={(value) => form.setData('login_feature_one', value)} error={form.errors.login_feature_one} maxLength={80} />
-                            <Field label="Feature 2" value={form.data.login_feature_two} onChange={(value) => form.setData('login_feature_two', value)} error={form.errors.login_feature_two} maxLength={80} />
-                            <Field label="Feature 3" value={form.data.login_feature_three} onChange={(value) => form.setData('login_feature_three', value)} error={form.errors.login_feature_three} maxLength={80} />
-                        </div>
-                    </section>
-
-                    <section className="border-t border-gray-100 pt-8">
-                        <SectionTitle title="Forgot Password Page" desc="Edit all text shown on the forgot password page." />
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <Field label="Left Panel Headline" value={form.data.forgot_panel_headline} onChange={(value) => form.setData('forgot_panel_headline', value)} error={form.errors.forgot_panel_headline} maxLength={120} />
-                            <Field label="Forgot Password Link Text (on Login)" value={form.data.login_forgot_password_text} onChange={(value) => form.setData('login_forgot_password_text', value)} error={form.errors.login_forgot_password_text} maxLength={60} />
-
-                            <div className="lg:col-span-2">
-                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Left Panel Subheading</label>
-                                <textarea
-                                    required
-                                    maxLength={300}
-                                    rows={2}
-                                    value={form.data.forgot_panel_subheading}
-                                    onChange={(event) => form.setData('forgot_panel_subheading', event.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
-                                />
-                                {form.errors.forgot_panel_subheading && <p className="text-xs text-red-500 mt-1">{form.errors.forgot_panel_subheading}</p>}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-gray-100">
+                                <Field label="Feature 1" value={form.data.login_feature_one} onChange={(v) => form.setData('login_feature_one', v)} error={form.errors.login_feature_one} maxLength={80} />
+                                <Field label="Feature 2" value={form.data.login_feature_two} onChange={(v) => form.setData('login_feature_two', v)} error={form.errors.login_feature_two} maxLength={80} />
+                                <Field label="Feature 3" value={form.data.login_feature_three} onChange={(v) => form.setData('login_feature_three', v)} error={form.errors.login_feature_three} maxLength={80} />
                             </div>
-
-                            <Field label="Form Title" value={form.data.forgot_title} onChange={(value) => form.setData('forgot_title', value)} error={form.errors.forgot_title} maxLength={80} />
-
-                            <div className="lg:col-span-2">
-                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Form Subtitle</label>
-                                <textarea
-                                    required
-                                    maxLength={300}
-                                    rows={2}
-                                    value={form.data.forgot_subtitle}
-                                    onChange={(event) => form.setData('forgot_subtitle', event.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
-                                />
-                                {form.errors.forgot_subtitle && <p className="text-xs text-red-500 mt-1">{form.errors.forgot_subtitle}</p>}
-                            </div>
-
-                            <Field label="Email Label" value={form.data.forgot_email_label} onChange={(value) => form.setData('forgot_email_label', value)} error={form.errors.forgot_email_label} maxLength={60} />
-                            <Field label="Email Placeholder" value={form.data.forgot_email_placeholder} onChange={(value) => form.setData('forgot_email_placeholder', value)} error={form.errors.forgot_email_placeholder} maxLength={120} />
-                            <Field label="Submit Button" value={form.data.forgot_submit_text} onChange={(value) => form.setData('forgot_submit_text', value)} error={form.errors.forgot_submit_text} maxLength={40} />
-                            <Field label="Submitting Text" value={form.data.forgot_submitting_text} onChange={(value) => form.setData('forgot_submitting_text', value)} error={form.errors.forgot_submitting_text} maxLength={60} />
-                            <Field label="Back Link Text" value={form.data.forgot_back_text} onChange={(value) => form.setData('forgot_back_text', value)} error={form.errors.forgot_back_text} maxLength={60} />
                         </div>
-                    </section>
+                    )}
 
-                    <section className="border-t border-gray-100 pt-8">
-                        <SectionTitle title="Reset Password Page" desc="Edit all text shown on the reset password page." />
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <Field label="Badge Text" value={form.data.reset_badge_text} onChange={(value) => form.setData('reset_badge_text', value)} error={form.errors.reset_badge_text} maxLength={60} />
-                            <Field label="Page Title" value={form.data.reset_title} onChange={(value) => form.setData('reset_title', value)} error={form.errors.reset_title} maxLength={80} />
-
-                            <div className="lg:col-span-2">
-                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Page Description</label>
-                                <textarea
-                                    required
-                                    maxLength={300}
-                                    rows={2}
-                                    value={form.data.reset_description}
-                                    onChange={(event) => form.setData('reset_description', event.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 focus:bg-white focus:outline-none transition-all resize-none brand-field"
-                                />
-                                {form.errors.reset_description && <p className="text-xs text-red-500 mt-1">{form.errors.reset_description}</p>}
+                    {/* ── TAB: Forgot Password Page ── */}
+                    {activeTab === 'forgot' && (
+                        <div className="space-y-4">
+                            <p className="text-xs text-gray-400 mb-2">Edit every word on the forgot password page — left panel and right form.</p>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <Field label="Left Panel Headline" value={form.data.forgot_panel_headline} onChange={(v) => form.setData('forgot_panel_headline', v)} error={form.errors.forgot_panel_headline} maxLength={120} />
+                                <Field label="Form Title" value={form.data.forgot_title} onChange={(v) => form.setData('forgot_title', v)} error={form.errors.forgot_title} maxLength={80} />
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Left Panel Subheading" value={form.data.forgot_panel_subheading} onChange={(v) => form.setData('forgot_panel_subheading', v)} error={form.errors.forgot_panel_subheading} maxLength={300} rows={2} />
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Form Subtitle" value={form.data.forgot_subtitle} onChange={(v) => form.setData('forgot_subtitle', v)} error={form.errors.forgot_subtitle} maxLength={300} rows={2} />
+                                </div>
+                                <Field label="Email Label" value={form.data.forgot_email_label} onChange={(v) => form.setData('forgot_email_label', v)} error={form.errors.forgot_email_label} maxLength={60} />
+                                <Field label="Email Placeholder" value={form.data.forgot_email_placeholder} onChange={(v) => form.setData('forgot_email_placeholder', v)} error={form.errors.forgot_email_placeholder} maxLength={120} />
+                                <Field label="Submit Button" value={form.data.forgot_submit_text} onChange={(v) => form.setData('forgot_submit_text', v)} error={form.errors.forgot_submit_text} maxLength={40} />
+                                <Field label="Submitting Text" value={form.data.forgot_submitting_text} onChange={(v) => form.setData('forgot_submitting_text', v)} error={form.errors.forgot_submitting_text} maxLength={60} />
+                                <Field label="Back to Login Link" value={form.data.forgot_back_text} onChange={(v) => form.setData('forgot_back_text', v)} error={form.errors.forgot_back_text} maxLength={60} />
                             </div>
-
-                            <Field label="Email Field Label" value={form.data.reset_email_label} onChange={(value) => form.setData('reset_email_label', value)} error={form.errors.reset_email_label} maxLength={60} />
-                            <Field label="New Password Label" value={form.data.reset_new_password_label} onChange={(value) => form.setData('reset_new_password_label', value)} error={form.errors.reset_new_password_label} maxLength={60} />
-                            <Field label="New Password Placeholder" value={form.data.reset_new_password_placeholder} onChange={(value) => form.setData('reset_new_password_placeholder', value)} error={form.errors.reset_new_password_placeholder} maxLength={120} />
-                            <Field label="Confirm Password Label" value={form.data.reset_confirm_label} onChange={(value) => form.setData('reset_confirm_label', value)} error={form.errors.reset_confirm_label} maxLength={60} />
-                            <Field label="Confirm Password Placeholder" value={form.data.reset_confirm_placeholder} onChange={(value) => form.setData('reset_confirm_placeholder', value)} error={form.errors.reset_confirm_placeholder} maxLength={120} />
-                            <Field label="Submit Button" value={form.data.reset_submit_text} onChange={(value) => form.setData('reset_submit_text', value)} error={form.errors.reset_submit_text} maxLength={40} />
-                            <Field label="Submitting Text" value={form.data.reset_submitting_text} onChange={(value) => form.setData('reset_submitting_text', value)} error={form.errors.reset_submitting_text} maxLength={60} />
-                            <Field label="Back Link Text" value={form.data.reset_back_text} onChange={(value) => form.setData('reset_back_text', value)} error={form.errors.reset_back_text} maxLength={60} />
                         </div>
-                    </section>
+                    )}
+
+                    {/* ── TAB: Reset Password Page ── */}
+                    {activeTab === 'reset' && (
+                        <div className="space-y-4">
+                            <p className="text-xs text-gray-400 mb-2">Edit every word on the reset password page — left panel and right form.</p>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <Field label="Left Panel Badge Text" value={form.data.reset_badge_text} onChange={(v) => form.setData('reset_badge_text', v)} error={form.errors.reset_badge_text} maxLength={60} />
+                                <Field label="Left Panel Title" value={form.data.reset_title} onChange={(v) => form.setData('reset_title', v)} error={form.errors.reset_title} maxLength={80} />
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Left Panel Description" value={form.data.reset_description} onChange={(v) => form.setData('reset_description', v)} error={form.errors.reset_description} maxLength={300} rows={2} />
+                                </div>
+                                <Field label="Email Field Label" value={form.data.reset_email_label} onChange={(v) => form.setData('reset_email_label', v)} error={form.errors.reset_email_label} maxLength={60} />
+                                <Field label="New Password Label" value={form.data.reset_new_password_label} onChange={(v) => form.setData('reset_new_password_label', v)} error={form.errors.reset_new_password_label} maxLength={60} />
+                                <Field label="New Password Placeholder" value={form.data.reset_new_password_placeholder} onChange={(v) => form.setData('reset_new_password_placeholder', v)} error={form.errors.reset_new_password_placeholder} maxLength={120} />
+                                <Field label="Confirm Password Label" value={form.data.reset_confirm_label} onChange={(v) => form.setData('reset_confirm_label', v)} error={form.errors.reset_confirm_label} maxLength={60} />
+                                <Field label="Confirm Password Placeholder" value={form.data.reset_confirm_placeholder} onChange={(v) => form.setData('reset_confirm_placeholder', v)} error={form.errors.reset_confirm_placeholder} maxLength={120} />
+                                <Field label="Submit Button" value={form.data.reset_submit_text} onChange={(v) => form.setData('reset_submit_text', v)} error={form.errors.reset_submit_text} maxLength={40} />
+                                <Field label="Submitting Text" value={form.data.reset_submitting_text} onChange={(v) => form.setData('reset_submitting_text', v)} error={form.errors.reset_submitting_text} maxLength={60} />
+                                <Field label="Back to Login Link" value={form.data.reset_back_text} onChange={(v) => form.setData('reset_back_text', v)} error={form.errors.reset_back_text} maxLength={60} />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── TAB: Reset Email ── */}
+                    {activeTab === 'email' && (
+                        <div className="space-y-4">
+                            <p className="text-xs text-gray-400 mb-2">Customize the email employees receive when they request a password reset.</p>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <Field label="Email Subject Line" value={form.data.email_reset_subject} onChange={(v) => form.setData('email_reset_subject', v)} error={form.errors.email_reset_subject} maxLength={120} />
+                                <Field label="Greeting" value={form.data.email_reset_greeting} onChange={(v) => form.setData('email_reset_greeting', v)} error={form.errors.email_reset_greeting} maxLength={80} />
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Introduction Paragraph" value={form.data.email_reset_intro} onChange={(v) => form.setData('email_reset_intro', v)} error={form.errors.email_reset_intro} maxLength={500} rows={3} />
+                                </div>
+                                <Field label="Reset Button Text" value={form.data.email_reset_button} onChange={(v) => form.setData('email_reset_button', v)} error={form.errors.email_reset_button} maxLength={60} />
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Link Expiry Notice" value={form.data.email_reset_expire} onChange={(v) => form.setData('email_reset_expire', v)} error={form.errors.email_reset_expire} maxLength={300} rows={2} />
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <Textarea label="Footer / No-Action Note" value={form.data.email_reset_no_action} onChange={(v) => form.setData('email_reset_no_action', v)} error={form.errors.email_reset_no_action} maxLength={300} rows={2} />
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3 px-4 py-3 rounded-xl brand-soft-bg border brand-soft-border text-xs brand-text">
+                                <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                <span>The reset link button inside the email is generated automatically — only the button label can be changed here.</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </form>
         </>
